@@ -2,7 +2,7 @@ from util.determine_digit import determine_digit
 import cv2
 
 
-def detect_reg(prediction, image_path):
+def detect_reg(prediction, image):
     boxes = prediction.boxes
     names = prediction.names
 
@@ -13,7 +13,7 @@ def detect_reg(prediction, image_path):
     # return
     x1, y1, x2, y2 = boxes[0].xyxy[0].tolist()
     # print(x,y,width,height)
-    image = cv2.imread(image_path)
+    # image = cv2.imread(image_path)
     reg_roi = image[int(y1) : int(y2), int(x1) : int(x2)]
     gray = cv2.cvtColor(reg_roi, cv2.COLOR_BGR2GRAY)
     th, threshed = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)

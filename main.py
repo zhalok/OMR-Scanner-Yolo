@@ -3,7 +3,7 @@ from reg_detection import detect_reg
 from set_detection import detect_set
 from util.grading import grading
 import os
-
+import cv2
 import json
 
 # uploaded = files.upload()
@@ -12,8 +12,8 @@ import json
 image_path = "images/test.jpg"
 model_path = "models/model.pt"
 
-
-predictions = predict(model_path=model_path, image_path=image_path)
+image = cv2.imread(image_path)
+predictions = predict(model_path=model_path, image=image)
 
 reg = detect_reg(predictions, image_path)
 

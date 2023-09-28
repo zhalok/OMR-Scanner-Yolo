@@ -4,3 +4,6 @@ numpy
 sklearn
 matplotlib
 gdown
+fastapi
+uvicorn
+python-multipart 

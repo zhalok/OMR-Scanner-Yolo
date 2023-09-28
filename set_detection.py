@@ -2,8 +2,8 @@ import cv2
 from util.determine_set import determine_set
 
 
-def detect_set(prediction, image_path):
-    image = cv2.imread(image_path)
+def detect_set(prediction, image):
+    # image = cv2.imread(image_path)
     boxes = prediction.boxes
     names = prediction.names
 
