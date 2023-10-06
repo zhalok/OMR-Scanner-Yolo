@@ -47,7 +47,7 @@ app.add_middleware(
 )
 
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def save_file(directory, name, file):
@@ -81,8 +81,8 @@ def uploadtotal(file: Annotated[bytes, File()], name: Annotated[str, Form()]):
         answers = [
             {"question_no": ans["question"], "answer": ans["answer"]} for ans in answers
         ]
-        results = {"registartion": reg, "setCode": setCode, "answers": answers}
-        return results
+        result = {"registartion": reg, "setCode": setCode, "answers": answers}
+        return result
 
         os.mkdir(os.path.join("single", str(name)))
         os.mkdir(os.path.join("single", str(name), "answers"))
@@ -102,31 +102,40 @@ def uploadtotal(file: Annotated[bytes, File()], name: Annotated[str, Form()]):
         print(e)
 
 
-# @app.post("/api/upload/batch")
-# def uploadBatchBuffer(filezip: Annotated[bytes, File()], name: Annotated[str, Form()]):
-#     z = zipfile.ZipFile(io.BytesIO(filezip))
-#     # print("name", name)
-#     os.mkdir(os.path.join("batch", str(name)))
-#     os.mkdir(os.path.join("batch", str(name), "answers"))
-#     os.mkdir(os.path.join("batch", str(name), "images"))
-#     results = []
-#     for i in z.infolist():
-#         if i.filename[-1] == "/":
-#             continue
+@app.post("/api/upload/batch")
+def uploadBatchBuffer(filezip: Annotated[bytes, File()], name: Annotated[str, Form()]):
+    z = zipfile.ZipFile(io.BytesIO(filezip))
+    # print("name", name)
+    # os.mkdir(os.path.join("batch", str(name)))
+    # os.mkdir(os.path.join("batch", str(name), "answers"))
+    # os.mkdir(os.path.join("batch", str(name), "images"))
+    results = []
+    for i in z.infolist():
+        if i.filename[-1] == "/":
+            continue
 
-#         content = z.read(i)
-#         image_np = np.frombuffer(content, np.uint8)
-#         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
-#         filename = uuid.uuid4()
+        content = z.read(i)
+        image_np = np.frombuffer(content, np.uint8)
+        image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
+        predictions = predict("models/model.pt", image)
+        setCode = detect_set(predictions, image)
+        reg = detect_reg(predictions, image)
+        answers = grading(predictions)
+        answers = [
+            {"question_no": ans["question"], "answer": ans["answer"]} for ans in answers
+        ]
+        result = {"registartion": reg, "setCode": setCode, "answers": answers}
+        # filename = uuid.uuid4()
 
-#         result = detect(image, name=str(filename), dir=os.path.join("batch", str(name)))
-#         results.append(result)
+        # result = detect(image, name=str(filename), dir=os.path.join("batch", str(name)))
 
-#     zippath = os.path.join("batch", str(name))
+        results.append(result)
 
-#     zip_file(folder_path=zippath, zip_file_name=zippath + ".zip")
+    # zippath = os.path.join("batch", str(name))
 
-#     upload_to_aws(zippath + ".zip")
-#     shutil.rmtree(os.path.join("batch", str(name)))
-#     os.remove(zippath + ".zip")
-#     return {"results": results}
+    # zip_file(folder_path=zippath, zip_file_name=zippath + ".zip")
+
+    # upload_to_aws(zippath + ".zip")
+    # shutil.rmtree(os.path.join("batch", str(name)))
+    # os.remove(zippath + ".zip")
+    return {"results": results}

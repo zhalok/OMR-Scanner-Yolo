@@ -35,7 +35,7 @@ def detect_set(prediction, image):
     for i in cnts:
         M = cv2.moments(i)
         (x, y, w, h) = cv2.boundingRect(i)
-        print(w, h)
+        # print(w, h)
         ar = w / float(h)
         if w >= 35 and w <= 60 and h >= 35 and h <= 60:
             if M["m00"] != 0:
