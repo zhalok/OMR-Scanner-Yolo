@@ -18,8 +18,8 @@ def upload_to_aws(filepath):
             s3={"addressing_style": "virtual"}
         ),  # Configures to use subdomain/virtual calling format.
         region_name="blr1",  # Use the region in your endpoint.
-        aws_access_key_id="DO00AFG7AFYVWJKD3H3W",  # Access key pair. You can create access key pairs using the control panel or API.
-        aws_secret_access_key="yWUlSuj26bkSuwZy8pn0dTf4/dokPhjjR6Gdd4EAye4",
+        ",  # Access key pair. You can create access key pairs using the control panel or API.
+        ",
     )  # Secret access key defined through an environment variable.
 
     # Step 3: Call the put_object command and specify the file to upload.
